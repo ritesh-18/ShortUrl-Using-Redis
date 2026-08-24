@@ -27,13 +27,15 @@ export class UrlServices {
         //fetch from redis , if not then from db
         const redisData = await this.redisRepo.getUrl(shortUrl);
         if (redisData) {
+            //also update the click
+            this.urlRepo.updateClicks(shortUrl)
             return redisData
         }
         const dbData = await this.urlRepo.findShortUrl(shortUrl);
         if (!dbData) {
             throw new NotFoundError("url not found")
-        }
-        console.log("dbData " , dbData)
+        } this.urlRepo.updateClicks(shortUrl)
+        this.redisRepo.setUrlMapping(dbData.shortUrl , dbData.originaUrl)
         return dbData.originaUrl
     }
     async updateClicks(shortUrl: string) {

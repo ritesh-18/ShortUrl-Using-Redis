@@ -24,7 +24,7 @@ export const validateRequestBody = (schema: AnyZodObject) => {
                 success: false,
                 error: error
             });
-            
+
         }
     }
 }
@@ -37,20 +37,20 @@ export const validateRequestBody = (schema: AnyZodObject) => {
 export const validateQueryParams = (schema: AnyZodObject) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            
+
             await schema.parseAsync(req.query);
-            console.log("Query params are valid");
+            logger.info("Query params are valid");
             next();
 
         } catch (error) {
             // If the validation fails, 
-
+            logger.error("Query params are invalid");
             res.status(400).json({
                 message: "Invalid query params",
                 success: false,
                 error: error
             });
-            
+
         }
     }
 }
@@ -58,20 +58,20 @@ export const validateQueryParams = (schema: AnyZodObject) => {
 export const validateRouteParams = (schema: AnyZodObject) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log(req.params)
+
             await schema.parseAsync(req.params);
-            console.log("Route params are valid");
+            logger.info("Route params are valid");
             next();
 
         } catch (error) {
             // If the validation fails, 
-
+            logger.error("Route params are invalid");
             res.status(400).json({
                 message: "Invalid route params",
                 success: false,
                 error: error
             });
-            
+
         }
     }
 }

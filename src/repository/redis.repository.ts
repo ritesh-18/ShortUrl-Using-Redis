@@ -32,7 +32,6 @@ export class RedisClientRepository {
         }
        const key = `key:${shortcode}`
        const data= await redis.get(key)
-       console.log("data value is ", data)
        return data;
     }
     async removeUrl(shortcode: string) {

@@ -7,6 +7,8 @@ import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
 import { dbConnect } from './config/db';
 import { initRedis } from './config/redis';
+import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { trpcRouter } from './routers/trpc';
 // import { dot } from 'node:test/reporters';
 const app = express();
 
@@ -24,7 +26,9 @@ app.use('/api/v2', v2Router);
 /**
  * Add the error handler middleware
  */
-
+app.use('/trpc' , createExpressMiddleware({
+    router:trpcRouter
+}))
 app.use(appErrorHandler);
 app.use(genericErrorHandler);
 
