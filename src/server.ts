@@ -6,6 +6,7 @@ import { appErrorHandler, genericErrorHandler } from './middlewares/error.middle
 import logger from './config/logger.config';
 import { attachCorrelationIdMiddleware } from './middlewares/correlation.middleware';
 import { dbConnect } from './config/db';
+import { initRedis } from './config/redis';
 // import { dot } from 'node:test/reporters';
 const app = express();
 
@@ -29,6 +30,12 @@ app.use(genericErrorHandler);
 
 
 app.listen(serverConfig.PORT, async() => {
+    await initRedis()
+    // const redis=new RedisClientRepository()
+    // await redis.setUrlMapping("abc" , "www.google.com")
+    // await redis.getUrl("abc")
+    // await redis.removeUrl('abc')
+    // await redis.getUrl("abc")
     await dbConnect()
     logger.info(`Server is running on http://localhost:${serverConfig.PORT}`);
     logger.info(`Press Ctrl+C to stop the server.`);

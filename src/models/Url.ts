@@ -3,15 +3,17 @@ import mongoose ,{Document , Schema}from "mongoose";
 
 
 
- interface Urls extends Document{
+ export interface Urls extends Document{
      originaUrl:string
      shortUrl:string
+     clicks:number
      created_at:Date
      updated_at:Date
 }
 const schema=new Schema<Urls>({
     originaUrl:{type:String , required:true},
-    shortUrl:{type:String , required:true}
+    shortUrl:{type:String , required:true , unique:true},
+    clicks:{type:Number , default:0}
 
 }, {timestamps:true})
 
