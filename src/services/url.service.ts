@@ -1,29 +1,45 @@
+import { serverConfig } from "../config";
 import { RedisClientRepository } from "../repository/redis.repository";
-import {ShortUrl} from "../repository/shorturl.repository"
-import {ShortUrlBody} from "../utils/types/shorturlbody"
+import { ShortUrl } from "../repository/shorturl.repository"
+import { convertbase62 } from "../utils/base62";
+import { NotFoundError } from "../utils/errors/app.error";
+import { ShortUrlBody } from "../utils/types/shorturlbody"
 
-export class UrlServices{
+export class UrlServices {
 
-    private urlRepo:ShortUrl;
-    private redisRepo:RedisClientRepository;
-    constructor(){
-         this.urlRepo= new ShortUrl();
-         this.redisRepo=new RedisClientRepository();
+    private urlRepo: ShortUrl;
+    private redisRepo: RedisClientRepository;
+    constructor() {
+        this.urlRepo = new ShortUrl();
+        this.redisRepo = new RedisClientRepository();
 
     }
-    async createShortUrl(data:ShortUrlBody){
+    async createShortUrl(data: ShortUrlBody) {
         // create an index and then save it 
-        const shorturl=await this.redisRepo.getNextIndex();
-        await this.redisRepo.setUrlMapping(String(shorturl) , data.url)
-        return await this.urlRepo.createShortUrl({originaUrl:data.url  ,shortUrl:String(shorturl)});
+        const index = await this.redisRepo.getNextIndex();
+        //converti into base62
+        const shorturl = convertbase62(index)
+        await this.redisRepo.setUrlMapping(String(shorturl), data.url)
+        await this.urlRepo.createShortUrl({ originaUrl: data.url, shortUrl: String(shorturl) });
+        return `${serverConfig.BASE_URL}/${shorturl}`
     }
-    async readShorturl(shortUrl:string){
-        return await this.urlRepo.findShortUrl(shortUrl)
+    async readShorturl(shortUrl: string) {
+        //fetch from redis , if not then from db
+        const redisData = await this.redisRepo.getUrl(shortUrl);
+        if (redisData) {
+            return redisData
+        }
+        const dbData = await this.urlRepo.findShortUrl(shortUrl);
+        if (!dbData) {
+            throw new NotFoundError("url not found")
+        }
+        console.log("dbData " , dbData)
+        return dbData.originaUrl
     }
-    async updateClicks(shortUrl:string){
+    async updateClicks(shortUrl: string) {
         await this.urlRepo.updateClicks(shortUrl)
     }
-    async deleteShortUrl(shortUrl:string){
+    async deleteShortUrl(shortUrl: string) {
         await this.urlRepo.deleteUrl(shortUrl)
     }
 }

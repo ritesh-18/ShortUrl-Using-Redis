@@ -30,7 +30,7 @@ export class RedisClientRepository {
         if (!redis.isOpen) {
             await redis.connect();
         }
-        const key = `key:${shortcode}`
+       const key = `key:${shortcode}`
        const data= await redis.get(key)
        console.log("data value is ", data)
        return data;

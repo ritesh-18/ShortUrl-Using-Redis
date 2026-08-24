@@ -12,4 +12,8 @@ export const urlResponseSchema = z.object({
     message: z.string()
 })
 
+export const urlparams=z.object({
+    shortCode:z.string()
+})
+
 // body should contains - url , ttl(opt) ,shortcode(opt)

@@ -6,6 +6,7 @@ type ServerConfig = {
     DB_URL:string
     REDIS_URL:string
     REDIS_COUNTER_KEY:string
+    BASE_URL:string
 }
 
 function loadEnv() {
@@ -19,5 +20,6 @@ export const serverConfig: ServerConfig = {
     PORT: Number(process.env.PORT) || 3001,
     DB_URL:String(process.env.MONGO_URL)||"",
     REDIS_URL:String(process.env.REDIS_URL)||"",
-    REDIS_COUNTER_KEY:String(process.env.REDIS_COUNTER_KEY)||""
+    REDIS_COUNTER_KEY:String(process.env.REDIS_COUNTER_KEY)||"",
+    BASE_URL:String(process.env.BASE_URL)||""
 };
