@@ -9,16 +9,29 @@ export const trpcUrlController = {
         z.object({
             originalUrl: z.string().url("Invalid Url")
         })
-    ).mutation(async({ input }) => {
+    ).mutation(async ({ input }) => {
         try {
-           const url = input.originalUrl;
-           const resData= await urlService.createShortUrl({ url })
-           return resData;
+            const url = input.originalUrl;
+            const resData = await urlService.createShortUrl({ url })
+            return resData;
         } catch (error) {
-              logger.error("Something went wrong while creating short url")
-              throw new InternalServerError("Error while creating short url ")
+            logger.error("Something went wrong while creating short url")
+            throw new InternalServerError("Error while creating short url ")
         }
 
     }
-    )
+    ),
+    read: appProcedure.input(
+        z.object({
+            shortCode: z.string()
+        })
+    ).query(async ({ input }) => {
+        try {
+            const data = await urlService.readShorturl(input.shortCode);
+            return data;
+        } catch (error) {
+            logger.error("Something went wrong while getting original url")
+            throw new InternalServerError("Error while getting original url ")
+        }
+    })
 }
