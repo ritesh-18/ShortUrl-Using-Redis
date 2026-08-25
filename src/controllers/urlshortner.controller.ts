@@ -26,10 +26,11 @@ export class ShortUrlController {
       try {
          //fetch from redis if not then db
          const data = await this.urlService.readShorturl(req.params['shortCode'])
-         res.status(201).json({
-            success: true,
-            url: data
-         })
+         res.status(302).redirect(data)
+         // res.status(201).json({
+         //    success: true,
+         //    url: data
+         // })
       } catch (error) {
          logger.error("Somethings went wrong while fetching short url")
          next(new InternalServerError("Could not get short url"));
